@@ -108,7 +108,8 @@ import config from './config.js'
 
     approveButton.addEventListener("click", async () => {
         const amount = inputCurrency.value
-        await swapper.approve(luffy, amount, 18)
+        const tokenDetails = tokenOptions[selectLabels.inputSelectLabel.innerHTML]
+        await swapper.approve(tokenDetails.address, amount, tokenDetails.decimals)
         swapButton.style.display = "inline-block"
         approveButton.style.display = "none"
     })
@@ -140,30 +141,47 @@ import config from './config.js'
 
     async function onchange(from, to, reversed=false) {
         const inout = {inputCurrency, outputCurrency}
-        const inn = inout[from]
-        const out = inout[to]
+        const inn = inout[`${from}Currency`]
+        const out = inout[`${to}Currency`]
+        const inLabel = selectLabels[`${from}SelectLabel`]
+        const outLabel = selectLabels[`${to}SelectLabel`]
         const inValue = inn.value
+        const inLableValue = inLabel.innerText
+        const outLableValue = outLabel.innerText
+        const inTokenDetails = tokenOptions[inLableValue]
+        const outTokenDetails = tokenOptions[outLableValue]
         let outValue = 0
         if(Number(inValue) > 0){
-            const [inputToken, outputToken] = reversed ? [weth, luffy] : [luffy, weth]
-            const amountOut = await swapper.handleCurrencyValueChange(inValue, 18, inputToken, outputToken)
-            const approvedValue = await swapper.getAllowance(luffy)
-            const compareValue = reversed ? amountOut : inValue*10**18
-            if(compareValue > approvedValue){
-                swapButton.style.display = "none"
-                approveButton.style.display = "inline-block"
+            if(inTokenDetails.address === outTokenDetails.address){
+                outValue = inValue 
             }else {
-                swapButton.style.display = "inline-block"
-                approveButton.style.display = "none"
+                const [inputToken, outputToken] = [inTokenDetails.address, outTokenDetails.address] 
+                const amountOut = await swapper.handleCurrencyValueChange(inValue, 18, inputToken, outputToken)
+                const allowanceToken = reversed ? outTokenDetails : inTokenDetails
+                if(allowanceToken.symbol !== "BNB"){
+                    const approvedValue = await swapper.getAllowance(allowanceToken.address)
+                    const compareValue = reversed ? amountOut : inValue*10**(inTokenDetails.decimals)
+                    if(compareValue > approvedValue){
+                        swapButton.style.display = "none"
+                        approveButton.style.display = "inline-block"
+                    }else {
+                        swapButton.style.display = "inline-block"
+                        approveButton.style.display = "none"
+                    }
+                }else {
+                    swapButton.style.display = "inline-block"
+                    approveButton.style.display = "none"
+                }
+                
+                const slippage = reversed ? 1+defaultSlippage : 1-defaultSlippage
+                outValue = (amountOut*slippage/10**outTokenDetails.decimals).toFixed(8)
             }
-            const slippage = reversed ? 1+defaultSlippage : 1-defaultSlippage
-            outValue = (amountOut*slippage/10**18).toFixed(8)
         }
         out.value = outValue
     }
 
-    inputCurrency.onkeyup = () => onchange("inputCurrency", "outputCurrency")
-    outputCurrency.onkeyup = () => onchange("outputCurrency", "inputCurrency", true)
+    inputCurrency.onkeyup = () => onchange("input", "output")
+    outputCurrency.onkeyup = () => onchange("output", "input", true)
     
     
 })()

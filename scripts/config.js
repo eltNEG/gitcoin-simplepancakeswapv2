@@ -16,7 +16,7 @@ export default {
         "BUSD": {
             symbol: "BUSD",
             decimals: 18,
-            address: "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee"
+            address: "0x78867bbeef44f2326bf8ddd1941a4439382ef2a7"
         },
         "LUFFYBSC": {
             symbol: "LUFFYBSC",
