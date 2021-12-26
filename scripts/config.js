@@ -3,16 +3,24 @@ export default {
     defaultSlippage: 0.005,
     chainId: 5,
     tokens: {
-        "WBNB": {
-            symbol: "WBNB",
-            address: "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd" // mainnet: 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c
-        },
         "BNB": {
             symbol: "BNB",
-            address: "0x0000000000000000000000000000000000000000"
+            decimals: 18,
+            address: "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd" //0x0000000000000000000000000000000000000000
+        },
+        "WBNB": {
+            symbol: "WBNB",
+            decimals: 18,
+            address: "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd" // mainnet: 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c
+        },
+        "BUSD": {
+            symbol: "BUSD",
+            decimals: 18,
+            address: "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee"
         },
         "LUFFYBSC": {
             symbol: "LUFFYBSC",
+            decimals: 18,
             address: "0x389f1c37977508008c7b89a660a86d0b5f29dea8"
         },
     }

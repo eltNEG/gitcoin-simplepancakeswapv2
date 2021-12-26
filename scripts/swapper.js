@@ -69,6 +69,14 @@ export default class Swap {
         await tx.wait()
     }
     
+    async getTokenDetails(address){
+        const signer = await this.provider.getSigner()
+        const tokenContract = new ethers.Contract(address, tokenABI, signer)
+        const symbol = await tokenContract.symbol()
+        const decimals = await tokenContract.decimals()
+        return {address, symbol, decimals}
+    }
+    
     async swap(fromBase, {amountInValue, amountInDecimals, amountOutValue, amountOutDecimals, fromToken, toToken}){
         const toAddress = (await this.provider.getSigner()).getAddress()
         const deadline = Math.ceil(Date.now()/1000) + 20*60

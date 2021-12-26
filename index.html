@@ -65,30 +65,33 @@
             Panake V2 Swap</div>
         <form class="px-4" id="swapform" onsubmit="event.preventDefault(); submitForm();">
             <div class="formfield">
-                <label class="label" for="inputCurrency">FLUFF <span class="dropIcon">▼</span></label>
+                <label id="inputSelectLabel" class="label" for="inputCurrency">
+                    BNB
+                    <!-- <span class="dropIcon">▼</span> -->
+                </label>
                 <input class="input" placeholder="0.001" min="0.000000000000000001" step="0.00000001" type="text" disabled required id="inputCurrency" />
             </div>
             <div class="w-full mt-4 -mb-2 text-center">
                 <span id="switch" class="inline-block text-3xl transform rotate-90 cursor-pointer">⇋</span>
             </div>
             <div class="formfield mt-8">
-                <label class="label" for="outputCurrency">BNB <span class="dropIcon">▼</span></label>
+                <label id="outputSelectLabel" class="label" for="outputCurrency">
+                    WBNB
+                    <!-- <span class="dropIcon">▼</span> -->
+                </label>
                 <input class="input" placeholder="0.001" min="0.000000000000000001" step="0.00000001" type="text" disabled required id="outputCurrency" />
             </div>
             <button class="btn" type="button" id="connect">Connect</button>
-            <button  class="btn" style="display: none;" type="button" id="approve">Approve</button>
-            <button  class="btn" style="display: none;" type="submit" id="swap">Swap</button>
+            <button class="btn" style="display: none;" type="button" id="approve">Approve</button>
+            <button class="btn" style="display: none;" type="submit" id="swap">Swap</button>
         </form>
     </div>
 
-    <div class="modal" style="background-color: rgba(0, 0, 0, 0.2); display: none;">
+    <div class="modal" id="selectmodal" style="background-color: rgba(0, 0, 0, 0.2); display: none;">
         <div class="bg-white rounded-md shadow p-4 h-80">
-            <div id="close-modal" class="text-xs text-center w-full text-red-400 cursor-pointer shadow">close</div>
-            <input class="mt-4 input-search" placeholder="search token address" />
-            <div class="mt-8 bg-gray-100 h-40 overflow-y-scroll rounded py-4">
-                <div class="modal-option">USDT</div>
-                <div class="modal-option">USDC</div>
-                <div class="modal-option">LINK</div>
+            <div id="closeModal" class="text-xs text-center w-full text-red-400 cursor-pointer shadow">close</div>
+            <input id="searchToken" class="mt-4 input-search" placeholder="search token address" />
+            <div id="tokenList" class="mt-8 bg-gray-100 h-40 overflow-y-scroll rounded py-4">
             </div>
         </div>
     </div>
