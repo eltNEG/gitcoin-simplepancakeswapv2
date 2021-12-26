@@ -33,7 +33,7 @@ import config from './config.js'
         approveButton.style.display = "none"
     })
 
-    swapButton.addEventListener("click", async () => {
+    async function submitForm() {
         const swapperConfig = {
             amountInValue: inputCurrency.value,
             amountInDecimals: 18,
@@ -43,7 +43,8 @@ import config from './config.js'
             toToken: weth,
         }
         await swapper.swap(false, swapperConfig)
-    })
+        return true
+    }
 
     async function onchange(from, to, reversed=false) {
         const inout = {inputCurrency, outputCurrency}

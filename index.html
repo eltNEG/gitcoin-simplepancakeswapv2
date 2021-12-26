@@ -5,32 +5,99 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clifford: '#da373d', 
+                    } 
+                }
+            } 
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+
+        @layer components {
+            .label {
+                @apply absolute top-0 left-0 flex items-center justify-center h-full cursor-pointer font-semibold bg-gray-300 border-r w-20;
+            }
+            .input {
+                @apply w-full pr-4 pl-24 text-2xl text-right bg-white placeholder-gray-400 outline-none h-full;
+            }
+            .input-search {
+                @apply w-full text-xl bg-white placeholder-gray-400 border border-gray-300 rounded-md pl-4 outline-none h-10;
+            }
+            .formfield {
+                @apply relative w-full overflow-hidden border border-gray-300 rounded-md h-14;
+            }
+            .btn {
+                @apply w-full mt-12 text-2xl text-white bg-gray-500 rounded-md h-14 hover:bg-gray-600;
+            }
+            .dropIcon {
+                @apply absolute bottom-0 mr-1 text-xs;
+            }
+            .modal {
+                @apply absolute flex flex-wrap justify-center items-center h-screen top-0 left-0 w-full;
+            }
+            .modal-option {
+                @apply h-10 flex items-center pl-4 hover:bg-gray-500 hover:text-white cursor-pointer;
+            }
+        }
+        
+    </style>
     <title>Simple Pancake v2 swap</title>
 </head>
 
-<style>
-    * {
-        box-sizing: border-box;
-    }
-</style>
-
-<body>
-    <div style="height: 90vh; width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center;">
-        <div style="position: absolute; top: 0; left: 0; width: 100%; font-size: 3rem; text-align: center;">Simple Panake V2 Swap</div>
-        <form id="swapform"  onsubmit="event.preventDefault(); submitForm();">
-            <label for="inputCurrency">Input currency</label>
-            <input min="0.000000000000000001" step="0.00000001" type="number" disabled required id="inputCurrency" />
-            <label for="outputCurrency">Output currency</label>
-            <input min="0.000000000000000001" step="0.00000001" type="number" disabled required id="outputCurrency"/>
-            <button type="button" id="connect">Connect</button>
-            <button style="display: none;" type="button" id="approve">Approve</button>
-            <button style="display: none;" type="submit" id="swap">Swap</button>
+<body class="relative w-full">
+    <div
+        style="height: 90vh; width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: center;">
+        <div style="position: absolute; top: 0; left: 0; width: 100%; font-size: 3rem; text-align: center;">Simple
+            Panake V2 Swap</div>
+        <form class="px-4" id="swapform" onsubmit="event.preventDefault(); submitForm();">
+            <div class="formfield">
+                <label class="label" for="inputCurrency">FLUFF <span class="dropIcon">▼</span></label>
+                <input class="input" placeholder="0.001" min="0.000000000000000001" step="0.00000001" type="text" disabled required id="inputCurrency" />
+            </div>
+            <div class="w-full mt-4 -mb-2 text-center">
+                <span id="switch" class="inline-block text-3xl transform rotate-90 cursor-pointer">⇋</span>
+            </div>
+            <div class="formfield mt-8">
+                <label class="label" for="outputCurrency">BNB <span class="dropIcon">▼</span></label>
+                <input class="input" placeholder="0.001" min="0.000000000000000001" step="0.00000001" type="text" disabled required id="outputCurrency" />
+            </div>
+            <button class="btn" type="button" id="connect">Connect</button>
+            <button  class="btn" style="display: none;" type="button" id="approve">Approve</button>
+            <button  class="btn" style="display: none;" type="submit" id="swap">Swap</button>
         </form>
+    </div>
+
+    <div class="modal" style="background-color: rgba(0, 0, 0, 0.2); display: none;">
+        <div class="bg-white rounded-md shadow p-4 h-80">
+            <div id="close-modal" class="text-xs text-center w-full text-red-400 cursor-pointer shadow">close</div>
+            <input class="mt-4 input-search" placeholder="search token address" />
+            <div class="mt-8 bg-gray-100 h-40 overflow-y-scroll rounded py-4">
+                <div class="modal-option">USDT</div>
+                <div class="modal-option">USDC</div>
+                <div class="modal-option">LINK</div>
+            </div>
+        </div>
     </div>
 </body>
 
 <!-- <script src="/walletmodal.js"></script> -->
 <script type="text/javascript" src="https://unpkg.com/web3modal@1.9.0/dist/index.js"></script>
-<script type="text/javascript" src="https://unpkg.com/@walletconnect/web3-provider@1.2.1/dist/umd/index.min.js"></script>
+<script type="text/javascript"
+    src="https://unpkg.com/@walletconnect/web3-provider@1.2.1/dist/umd/index.min.js"></script>
 <script type="module" src="/scripts/index.js"></script>
+
 </html>
