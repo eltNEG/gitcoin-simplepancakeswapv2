@@ -16,6 +16,7 @@ import config from './config.js'
     const searchToken = document.getElementById("searchToken")
 
     inputSelectLabel.addEventListener("click", () => handleSelect("inputSelectLabel"),false)
+    swapButton.addEventListener("click", swapTokens, false)
     outputSelectLabel.addEventListener("click", () => handleSelect("outputSelectLabel"),false)
     closeModal.addEventListener("click", handleCloseModal, false)
     switchValues.addEventListener("click", () => {
@@ -30,9 +31,7 @@ import config from './config.js'
         outputSelectLabel.innerText = inputCurrLableValue
     }, false)
 
-    const weth = config.tokens.WBNB.address 
-    const luffy = config.tokens.LUFFYBSC.address
-    delete config.tokens.LUFFYBSC
+    const bnbAddress = config.tokens.BNB.address.toLowerCase()
     const defaultSlippage = config.defaultSlippage
 
     let swapper = new Swapper(config)
@@ -126,17 +125,26 @@ import config from './config.js'
         handleCloseModal()
     }
 
-    async function submitForm() {
-        const swapperConfig = {
-            amountInValue: inputCurrency.value,
-            amountInDecimals: 18,
-            amountOutValue: outputCurrency.value,
-            amountOutDecimals: 18,
-            fromToken: luffy,
-            toToken: weth,
+    async function swapTokens() {
+        const inputCurrInputValue = inputCurrency.value
+        const outputCurrInputValue = outputCurrency.value
+        const inputCurrLableValue = inputSelectLabel.innerText
+        const outputCurrLabelValue = outputSelectLabel.innerText
+        const inputTokenDetails = tokenOptions[inputCurrLableValue]
+        const outputTokenDetails = tokenOptions[outputCurrLabelValue]
+        const swapperBNBConfig = {
+            bnbInput: inputTokenDetails.symbol === "BNB",
+            bnbOuput: outputTokenDetails.symbol === "BNB"
         }
-        await swapper.swap(false, swapperConfig)
-        return true
+        const swapperConfig = {
+            amountInValue: inputCurrInputValue,
+            amountInDecimals: inputTokenDetails.decimals,
+            amountOutValue: outputCurrInputValue,
+            amountOutDecimals: outputTokenDetails.decimals,
+            fromToken: inputTokenDetails.address,
+            toToken: outputTokenDetails.address,
+        }
+        await swapper.swap(swapperBNBConfig, swapperConfig)
     }
 
     async function onchange(from, to, reversed=false) {
@@ -155,8 +163,9 @@ import config from './config.js'
             if(inTokenDetails.address === outTokenDetails.address){
                 outValue = inValue 
             }else {
-                const [inputToken, outputToken] = [inTokenDetails.address, outTokenDetails.address] 
-                const amountOut = await swapper.handleCurrencyValueChange(inValue, 18, inputToken, outputToken)
+                const [inputToken, outputToken] = [inTokenDetails.address, outTokenDetails.address]
+                const bothTokens = inTokenDetails.address.toLowerCase() !== bnbAddress && outTokenDetails.address.toLowerCase() !== bnbAddress
+                const amountOut = await swapper.handleCurrencyValueChange(inValue, 18, inputToken, outputToken, bothTokens)
                 const allowanceToken = reversed ? outTokenDetails : inTokenDetails
                 if(allowanceToken.symbol !== "BNB"){
                     const approvedValue = await swapper.getAllowance(allowanceToken.address)

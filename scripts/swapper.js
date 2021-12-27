@@ -7,6 +7,8 @@ const routerABI = [
   
     'function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts)',
     'function getAmountsIn(uint amountOut, address[] calldata path) view returns (uint[] memory amounts)',
+
+    'function swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external returns (uint[] memory amounts)',
 ]
 
 const tokenABI = [
@@ -49,10 +51,11 @@ export default class Swap {
         this.contract = new ethers.Contract(this.config.pancakeswapV2Router, routerABI, this.provider.getSigner())
     }
 
-    async handleCurrencyValueChange(amountInValue, amountInDecimals, tokenIn, tokenOut) {
+    async handleCurrencyValueChange(amountInValue, amountInDecimals, tokenIn, tokenOut, bothTokens=false) {
         const amountIn = ethers.utils.parseUnits(amountInValue, amountInDecimals)
-        const [,amountOut] = await this.contract.getAmountsOut(amountIn, [tokenIn, tokenOut])
-        return Number(amountOut)
+        const path = bothTokens ? [tokenIn, this.config.tokens.BNB.address, tokenOut] : [tokenIn, tokenOut]
+        const amountsOut = await this.contract.getAmountsOut(amountIn, path)
+        return Number(amountsOut[path.length-1])
     }
 
     async getAllowance(token) {
@@ -77,16 +80,18 @@ export default class Swap {
         return {address, symbol, decimals}
     }
     
-    async swap(fromBase, {amountInValue, amountInDecimals, amountOutValue, amountOutDecimals, fromToken, toToken}){
+    async swap({bnbInput, bnbOuput}, {amountInValue, amountInDecimals, amountOutValue, amountOutDecimals, fromToken, toToken}){
         const toAddress = (await this.provider.getSigner()).getAddress()
         const deadline = Math.ceil(Date.now()/1000) + 20*60
         const amountOut = ethers.utils.parseUnits(amountOutValue, amountOutDecimals)
-        const amountInMax = ethers.utils.parseUnits((Number(amountInValue)*1.05).toFixed(8), amountInDecimals)
+        const amountInMax = ethers.utils.parseUnits(amountInValue, amountInDecimals)
         const path = [fromToken, toToken]
-        if(fromBase){
+        if(bnbInput){
           this.contract.swapETHForExactTokens(amountOut, path, toAddress, deadline, {value: amountInMax})
-        }else {
+        }else if(bnbOuput) {
           this.contract.swapTokensForExactETH(amountOut, amountInMax, path, toAddress, deadline)
+        }else {
+            this.contract.swapExactTokensForTokens(amountInMax, amountOut, [path[0], this.config.tokens.BNB.address, path[1]], toAddress, deadline)
         }
     }
     
