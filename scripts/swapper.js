@@ -48,6 +48,13 @@ export default class Swap {
     async init(){
         const provider = await this.web3Modal.connect();
         this.provider = new ethers.providers.Web3Provider(provider)
+        const {chainId} = (await this.provider.getNetwork())
+        console.log(chainId)
+        if(chainId !== this.config.chainId){
+            window.alert(`Wrong network! Please connect to ${this.config.networkName}`)
+            this.provider = null
+            return
+        }
         this.contract = new ethers.Contract(this.config.pancakeswapV2Router, routerABI, this.provider.getSigner())
     }
 
