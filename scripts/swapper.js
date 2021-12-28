@@ -76,6 +76,7 @@ export default class Swap {
         const signer = await this.provider.getSigner()
         const tokenContract = new ethers.Contract(token, tokenABI, signer)
         const tx = await tokenContract.approve(this.config.pancakeswapV2Router, ethers.utils.parseUnits(amount, decimal))
+        console.log("Approve tx hash", tx.hash)
         await tx.wait()
     }
     
@@ -93,12 +94,16 @@ export default class Swap {
         const amountOut = ethers.utils.parseUnits(amountOutValue, amountOutDecimals)
         const amountInMax = ethers.utils.parseUnits(amountInValue, amountInDecimals)
         const path = [fromToken, toToken]
+        let tx;
         if(bnbInput){
-          this.contract.swapETHForExactTokens(amountOut, path, toAddress, deadline, {value: amountInMax})
+            tx = this.contract.swapETHForExactTokens(amountOut, path, toAddress, deadline, {value: amountInMax})
+            console.log("swapETHForExactTokens tx hash", tx.hash)
         }else if(bnbOuput) {
-          this.contract.swapTokensForExactETH(amountOut, amountInMax, path, toAddress, deadline)
+            tx = thisthis.contract.swapTokensForExactETH(amountOut, amountInMax, path, toAddress, deadline)
+            console.log("swapTokensForExactETH tx hash", tx.hash)
         }else {
-            this.contract.swapExactTokensForTokens(amountInMax, amountOut, [path[0], this.config.tokens.BNB.address, path[1]], toAddress, deadline)
+            tx = thisthis.contract.swapExactTokensForTokens(amountInMax, amountOut, [path[0], this.config.tokens.BNB.address, path[1]], toAddress, deadline)
+            console.log("swapExactTokensForTokens tx hash", tx.hash)
         }
     }
     
