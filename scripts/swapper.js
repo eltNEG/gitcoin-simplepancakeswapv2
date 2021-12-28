@@ -99,10 +99,10 @@ export default class Swap {
             tx = this.contract.swapETHForExactTokens(amountOut, path, toAddress, deadline, {value: amountInMax})
             console.log("swapETHForExactTokens tx hash", tx.hash)
         }else if(bnbOuput) {
-            tx = thisthis.contract.swapTokensForExactETH(amountOut, amountInMax, path, toAddress, deadline)
+            tx = this.contract.swapTokensForExactETH(amountOut, amountInMax, path, toAddress, deadline)
             console.log("swapTokensForExactETH tx hash", tx.hash)
         }else {
-            tx = thisthis.contract.swapExactTokensForTokens(amountInMax, amountOut, [path[0], this.config.tokens.BNB.address, path[1]], toAddress, deadline)
+            tx = this.contract.swapExactTokensForTokens(amountInMax, amountOut, [path[0], this.config.tokens.BNB.address, path[1]], toAddress, deadline)
             console.log("swapExactTokensForTokens tx hash", tx.hash)
         }
     }
